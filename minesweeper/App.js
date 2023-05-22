@@ -29,6 +29,10 @@ class Api {
     this.htmlDom.clicks.textContent = this.clicks.toString().padStart(3, "0");
     this.setOptions();
     this.setCanvasSIze();
+    this.tickSound = new Audio("./assets/tick.mp3");
+    this.bombSound = new Audio("./assets/lose.mp3");
+    this.winSound = new Audio("./assets/win.mp3");
+    this.clickSound = new Audio("./assets/click.mp3");
   }
   setOptions() {
     if (!this.localStorage || !this.localStorage?.options) {
@@ -145,6 +149,7 @@ class Api {
                   this.clicks++;
                 }
                 if (!cell.isChecked) {
+                  this.clickSound.play();
                 }
                 this.htmlDom.clicks.textContent = this.clicks
                   .toString()
@@ -184,6 +189,7 @@ class Api {
               !cell.isChecked
             ) {
               if (!cell.isChecked && this.bombAmout - this.flags != 0) {
+                this.tickSound.play();
               }
               cell.isFlaged = true;
               this.flags++;
@@ -236,7 +242,6 @@ class Api {
           this.createCells();
           this.setCanvasSIze();
           this.animate();
-          this.htmlDom.setActivedificaltyBtn(this.dificalty);
           localStorage.setItem("dificalty", dificalty);
         }
       });

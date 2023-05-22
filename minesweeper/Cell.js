@@ -25,9 +25,9 @@ export default class Cell {
    */
   draw(ctx) {
     ctx.fillStyle = "rgb(128, 128, 128, 1)";
-    if (this.isBomb) {
-      ctx.fillStyle = "red";
-    }
+    // if (this.isBomb) {
+    //   ctx.fillStyle = "red";
+    // }
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = `bold ${this.radius / 2}px serif`;

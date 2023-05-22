@@ -93,6 +93,7 @@ body.dark {
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.404);
   border-radius: 0.1em;
   overflow: hidden;
+  padding: 1rem;
 }
 
 .game__dashboard__flags::after,
@@ -135,7 +136,7 @@ canvas {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  font-size: 2rem;
+  font-size: 5rem;
   background-color: ivory;
   border: 1px solid green;
   border-radius: 50%;
@@ -146,8 +147,7 @@ canvas {
   .game__dashboard__flags,
   .game__dashboard__timer,
   .game__dashboard__smile,
-  .game__dashboard__clicks,
-  .game__level button {
+  .game__dashboard__clicks {
     font-size: 3rem;
   }
   .game__level button {
@@ -166,11 +166,5 @@ canvas {
   }
   .game__level button {
     font-size: 1.2rem;
-  }
-}
-@media screen and (min-width: 1138px) {
-  .game__dashboard__flags,
-  .game__dashboard__timer {
-    padding: 1rem;
   }
 }

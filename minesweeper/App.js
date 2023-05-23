@@ -8,7 +8,7 @@ class Api {
     this.localStorage = this.getFromLocalStorage();
     this.dificalty = localStorage.getItem("dificalty") || "easy";
     this.width =
-      this.dificalty === "hard" ? 20 : this.dificalty === "medium" ? 15 : 10;
+      this.dificalty === "hard" ? 25 : this.dificalty === "medium" ? 15 : 10;
     this.row = this.width;
     this.col = this.width;
     this.bombAmout = Math.floor((this.width * this.width) / 10);
@@ -16,6 +16,7 @@ class Api {
     this.cells = [];
     this.isGameOver = false;
     this.flags = 0;
+    this.n = 0;
     this.isClicked = false;
     this.lms = 0;
     this.timer = 0;
@@ -107,69 +108,56 @@ class Api {
       this.cells = arr;
     }
 
-    this.htmlDom.canvas.addEventListener(
-      "click",
-      ({ offsetX, offsetY, detail }) => {
-        if (detail.x && detail.y) {
-          offsetX = detail.x;
-          offsetY = detail.y;
-        }
-        if (this.isGameOver || this.isWin) return;
-        this.cells.forEach((matrix) => {
-          matrix.forEach((cell) => {
-            if (
-              cell.x - 1 < offsetX &&
-              cell.x + this.radius + 1 > offsetX &&
-              cell.y - 1 < offsetY &&
-              cell.y + this.radius + 1 > offsetY
-            ) {
-              if (cell.isChecked || cell.isFlaged) return;
-              if (cell.isBomb) {
-                if (!this.isClicked) {
-                  let emptyCell = null;
-                  while (!emptyCell) {
-                    const row = Math.floor(Math.random() * this.width);
-                    const col = Math.floor(Math.random() * this.width);
-                    if (!this.cells[row][col].isBomb) {
-                      emptyCell = this.cells[row][col];
-                    }
+    this.htmlDom.canvas.addEventListener("click", ({ offsetX, offsetY }) => {
+      if (this.isGameOver || this.isWin) return;
+      this.cells.forEach((matrix) => {
+        matrix.forEach((cell) => {
+          if (
+            cell.x - 1 < offsetX &&
+            cell.x + this.radius + 1 > offsetX &&
+            cell.y - 1 < offsetY &&
+            cell.y + this.radius + 1 > offsetY
+          ) {
+            if (cell.isChecked || cell.isFlaged) return;
+            if (cell.isBomb) {
+              if (!this.isClicked) {
+                let emptyCell = null;
+                while (!emptyCell) {
+                  const row = Math.floor(Math.random() * this.width);
+                  const col = Math.floor(Math.random() * this.width);
+                  if (!this.cells[row][col].isBomb) {
+                    emptyCell = this.cells[row][col];
                   }
-                  emptyCell.isBomb = true;
-                  cell.isBomb = false;
-                  this.suroundedBombs();
-                  cell.isChecked = true;
-                  this.checkedCount++;
-                  this.checkCell(cell);
-                } else {
-                  this.bombSound.play();
-                  this.gameOver();
                 }
+                emptyCell.isBomb = true;
+                cell.isBomb = false;
+                this.suroundedBombs();
+                cell.isChecked = true;
+                this.checkedCount++;
+                this.checkCell(cell);
               } else {
-                if (detail === 1) {
-                  this.clicks++;
-                }
-                if (!cell.isChecked) {
-                  this.clickSound.play();
-                }
-                this.htmlDom.clicks.textContent = this.clicks
-                  .toString()
-                  .padStart(3, "0");
-                if (cell.total != 0) {
-                  cell.isChecked = true;
-                  this.checkedCount++;
-                } else {
-                  this.checkCell(cell);
-                  cell.isChecked = true;
-                  this.checkedCount++;
-                }
+                this.bombSound.play();
+                this.gameOver();
               }
+            } else {
+              this.clicks++;
+              this.checkedCount++;
+              this.clickSound.play();
+              cell.isChecked = true;
+              this.htmlDom.clicks.textContent = this.clicks
+                .toString()
+                .padStart(3, "0");
+              this.checkCell(cell);
+              setTimeout(() => {
+                this.checkForWin();
+              }, 10);
             }
-          });
+          }
         });
-        this.isClicked = true;
-        this.animate();
-      }
-    );
+      });
+      this.isClicked = true;
+      this.animate();
+    });
 
     this.htmlDom.canvas.addEventListener("contextmenu", (e) => {
       const { offsetX, offsetY } = e;
@@ -231,17 +219,15 @@ class Api {
           this.dificalty = dificalty;
           this.width =
             this.dificalty === "hard"
-              ? 20
+              ? 25
               : this.dificalty === "medium"
               ? 15
               : 10;
           this.row = this.width;
           this.col = this.width;
-          this.saveInLocalStorage("", "");
-          this.restart();
-          this.createCells();
+          this.bombAmout = Math.floor((this.width * this.width) / 10);
           this.setCanvasSIze();
-          this.animate();
+          this.restart();
           localStorage.setItem("dificalty", dificalty);
         }
       });
@@ -262,6 +248,7 @@ class Api {
   checkForWin() {
     if (this.width * this.width - this.checkedCount === this.bombAmout) {
       this.isWin = true;
+      this.saveInLocalStorage("", "");
       this.winSound.play();
     }
   }
@@ -289,33 +276,65 @@ class Api {
     }
   }
   checkCell(cell) {
-    const dispatch = (row, col) => {
-      const { x, y, radius } = this.cells[row][col];
-      const customClick = new CustomEvent("click", {
-        detail: { x: x + radius / 2, y: y + radius },
-      });
-      this.htmlDom.canvas.dispatchEvent(customClick);
-    };
     const { row, col } = cell;
+
+    if (this.cells[row][col + 1]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row][col + 1]);
+      }, 10);
+    }
+    if (this.cells[row][col - 1]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row][col - 1]);
+      }, 10);
+    }
+    if (this.cells[row - 1] && this.cells[row - 1][col]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row - 1][col]);
+      }, 10);
+    }
+    if (this.cells[row - 1] && this.cells[row - 1][col - 1]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row - 1][col - 1]);
+      }, 10);
+    }
+    if (this.cells[row - 1] && this.cells[row - 1][col + 1]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row - 1][col + 1]);
+      }, 10);
+    }
+    if (this.cells[row + 1] && this.cells[row + 1][col]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row + 1][col]);
+      }, 10);
+    }
+    if (this.cells[row + 1] && this.cells[row + 1][col + 1]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row + 1][col + 1]);
+      }, 10);
+    }
+    if (this.cells[row + 1] && this.cells[row + 1][col - 1]) {
+      setTimeout(() => {
+        this.checkRecursion(this.cells[row + 1][col - 1]);
+      }, 10);
+    }
     setTimeout(() => {
-      if (this.cells[row][col + 1]) {
-        dispatch(row, col + 1);
-      } else if (this.cells[row][col - 1]) {
-        dispatch(row, col - 1);
-      } else if (this.cells[row - 1] && this.cells[row - 1][col]) {
-        dispatch(row - 1, col);
-      } else if (this.cells[row - 1] && this.cells[row - 1][col - 1]) {
-        dispatch(row - 1, col - 1);
-      } else if (this.cells[row - 1] && this.cells[row - 1][col + 1]) {
-        dispatch(row - 1, col + 1);
-      } else if (this.cells[row + 1] && this.cells[row + 1][col]) {
-        dispatch(row + 1, col);
-      } else if (this.cells[row + 1] && this.cells[row + 1][col + 1]) {
-        dispatch(row + 1, col + 1);
-      } else if (this.cells[row + 1] && this.cells[row + 1][col - 1]) {
-        dispatch(row + 1, col - 1);
-      }
+      this.checkForWin();
+      this.animate();
     }, 10);
+  }
+  checkRecursion(cell) {
+    if (cell.isBomb || cell.isChecked) {
+      return;
+    }
+    if (cell.total > 0) {
+      this.checkedCount++;
+      cell.isChecked = true;
+    } else {
+      this.checkedCount++;
+      cell.isChecked = true;
+      this.checkCell(cell);
+    }
   }
   restart() {
     this.isGameOver = false;

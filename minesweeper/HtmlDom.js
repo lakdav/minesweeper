@@ -22,9 +22,11 @@ export default class HtmlDom {
     this.#createClicks();
     this.#createВifficultyLevelBtnsContainer();
     this.#createThemeBtn();
+    this.#createHistoryContainer();
     this.dasboard.append(this.flags, this.smile, this.timer, this.clicks);
     this.gameArea.appendChild(this.canvas);
     this.gameContainer.append(
+      this.historyContainer,
       this.dasboard,
       this.gameArea,
       this.difficultyLevelBtnsContainer,
@@ -102,12 +104,38 @@ export default class HtmlDom {
       }
     });
   }
+  #createHistoryContainer() {
+    this.historyContainer = document.createElement("div");
+    this.historyContainer.className = "game__history";
+    this.historyContainer.innerHTML =
+      "<button class='game__history__btn'>History</button><ul class='game__history__items'></ul>";
+    this.list = this.historyContainer.querySelector(".game__history__items");
+  }
+  createHistoryItem(items) {
+    this.list.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    items.forEach(({ result, clicks, time }) => {
+      this.historyItems = document.createElement("li");
+      this.historyItems.className = "game__history__item";
+      this.historyItems.innerHTML = `<p><span><span class='${result}'>result : </span>${result}</span><span><span>clicks :</span> ${clicks}</span><span><span>time :</span> ${time}</span></p>`;
+      fragment.appendChild(this.historyItems);
+    });
+    this.historyContainer
+      .querySelector(".game__history__items")
+      .appendChild(fragment);
+    document
+      .querySelector(".game__history__btn")
+      .addEventListener("click", () => {
+        this.list.classList.toggle("active");
+      });
+  }
+  onclick() {}
   setActivedificaltyBtn(id) {
     Array.from(this.difficultyLevelBtnsContainer.children).forEach((btn) => {
       if (btn.id === id) {
         btn.classList.add("active");
       } else {
-        if (btn.classList.contains("active")) {
+        if (btn.id !== btn.classList.contains("active")) {
           btn.classList.remove("active");
         }
       }

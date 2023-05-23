@@ -46,6 +46,9 @@ body.dark {
 .game {
   display: grid;
   grid-column: 2;
+  position: relative;
+  overflow: hidden;
+  border: 5px solid var(--bg-secondary);
 }
 .game__dashboard,
 .game__area {
@@ -133,7 +136,7 @@ canvas {
   color: var(--button-level-hover);
 }
 .theme {
-  position: absolute;
+  position: fixed;
   top: 1rem;
   right: 1rem;
   font-size: 5rem;
@@ -142,6 +145,85 @@ canvas {
   border-radius: 50%;
   padding: 0.2rem;
   cursor: pointer;
+}
+.game__history {
+}
+.game__history__btn {
+  width: 100%;
+  background-color: var(--bg-main);
+  border: 1px solid transparent;
+  font-size: 6rem;
+
+  color: var(--button-level-clr);
+  font-weight: bold;
+  transition: color 0.3s;
+  letter-spacing: 2px;
+  padding: 1rem;
+}
+.game__history__btn:hover {
+  color: var(--button-level-hover);
+  cursor: pointer;
+}
+.game__history__items {
+  width: 100%;
+  position: absolute;
+  list-style: none;
+  background-color: var(--bg-main);
+  color: black;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 0.3rem;
+  font-size: 4rem;
+  transition: transform 0.3s, opacity 0.1s;
+  transform: scaley(0);
+  transform-origin: top;
+  opacity: 0;
+}
+.game__history__items.active {
+  transform: scaley(1);
+  opacity: 1;
+}
+.game__history__item p {
+  padding: 0.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.game__history__item p:has(.Lose) {
+  background-color: rgba(255, 0, 0, 0.08);
+}
+.game__history__item p:has(.Win) {
+  background-color: rgba(0, 0, 255, 0.08);
+}
+.game__history__item p span {
+  flex: 1;
+}
+.game__history__item p > span {
+  font-style: italic;
+}
+.game__history__item p span > span {
+  font-weight: bold;
+}
+@media screen and (min-width: 600px) {
+  .game__history__btn {
+    font-size: 4rem;
+  }
+
+  .game__history__items {
+    font-size: 3rem;
+  }
+}
+@media screen and (min-width: 842px) {
+  .game__history__btn {
+    font-size: 3.5rem;
+  }
+
+  .game__history__items {
+    font-size: 2rem;
+  }
 }
 @media screen and (min-width: 40em) {
   .game__dashboard__flags,
@@ -166,5 +248,8 @@ canvas {
   }
   .game__level button {
     font-size: 1.2rem;
+  }
+  .game__history__items {
+    font-size: 1.6rem;
   }
 }

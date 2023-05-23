@@ -28,6 +28,9 @@ class Api {
     this.htmlDom.timer.textContent = this.timer.toString().padStart(3, "0");
     this.history = this.localStorage?.history ? this.localStorage?.history : [];
     this.htmlDom.clicks.textContent = this.clicks.toString().padStart(3, "0");
+
+    this.htmlDom.createHistoryItem(this.history);
+
     this.setOptions();
     this.setCanvasSIze();
     this.tickSound = new Audio("./assets/tick.mp3");
@@ -211,7 +214,7 @@ class Api {
     Array.from(this.dificaltyBtns).forEach((btn) => {
       btn.addEventListener("click", () => {
         let allow = true;
-        if (this.isClicked) {
+        if (this.isClicked && !this.win) {
           allow = confirm("are you abort the game ??");
         }
         if (allow) {
@@ -228,6 +231,7 @@ class Api {
           this.bombAmout = Math.floor((this.width * this.width) / 10);
           this.setCanvasSIze();
           this.restart();
+          this.htmlDom.setActivedificaltyBtn(btn.id);
           localStorage.setItem("dificalty", dificalty);
         }
       });
@@ -236,7 +240,12 @@ class Api {
   }
 
   loop = (t = 0) => {
-    if (this.isClicked && !this.isWin && !this.isGameOver) {
+    if (
+      this.isClicked &&
+      !this.isWin &&
+      !this.isGameOver &&
+      this.timer <= 999
+    ) {
       if (t - this.lms >= 1000) {
         this.timer += 1;
         this.htmlDom.timer.textContent = this.timer.toString().padStart(3, "0");
@@ -247,6 +256,7 @@ class Api {
   };
   checkForWin() {
     if (this.width * this.width - this.checkedCount === this.bombAmout) {
+      this.pushInHisotry("Win");
       this.isWin = true;
       this.saveInLocalStorage("", "");
       this.winSound.play();
@@ -355,7 +365,7 @@ class Api {
     this.animate();
   }
   gameOver = () => {
-    this.pushInHistry("lose");
+    this.pushInHisotry("Lose");
     this.isGameOver = true;
     this.htmlDom.smile.textContent = "😔";
     this.cells.forEach((matrix) => {
@@ -363,10 +373,18 @@ class Api {
         cell.isChecked = true;
       });
     });
+
     this.saveInLocalStorage("", "");
   };
-  pushInHistry(result) {
-    this.history.push({ result, time: this.timer });
+  pushInHisotry(result) {
+    if (this.history.length >= 10) {
+      this.history.length = 9;
+    }
+    this.history.unshift({
+      result,
+      clicks: this.clicks,
+      time: this.timer,
+    });
   }
   saveInLocalStorage(cells, options) {
     localStorage.setItem(

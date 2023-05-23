@@ -1,0 +1,255 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: clamp(0rem, 0rem + 1.05vw, 1rem);
+}
+body {
+  font-size: 1.6rem;
+  line-height: 0.6;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+:root {
+  --bg-main: silver;
+  --bg-secondary: rgba(0, 0, 0, 0.4);
+  --bg-body: ivory;
+  --bg-smile: ivory;
+  --button-level-clr: rgba(128, 128, 128, 0.521);
+  --button-level-bg: #fafafa;
+  --button-level-hover: rgba(128, 128, 128, 1);
+}
+body {
+}
+body.dark {
+  --bg-main: grey;
+  --bg-body: #111111;
+  --bg-smile: silver;
+  --button-level-clr: --bg-body;
+  --button-level-bg: rgba(128, 128, 128, 0.521);
+  --button-level-hover: ivory;
+}
+.main {
+  background-color: var(--bg-body);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.game {
+  display: grid;
+  grid-column: 2;
+  position: relative;
+  overflow: hidden;
+  border: 5px solid var(--bg-secondary);
+}
+.game__dashboard,
+.game__area {
+  padding: 0.5rem;
+  border: 10px solid var(--bg-main);
+  background-color: var(--bg-secondary);
+}
+.game__dashboard {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 30% 30% 15% 15%;
+  justify-content: space-between;
+}
+.game__dashboard__flags,
+.game__dashboard__timer,
+.game__dashboard__smile,
+.game__dashboard__clicks,
+.game__level button {
+  font-size: 5rem;
+}
+
+.game__dashboard__smile {
+  background-color: var(--bg-smile);
+  border: 1px solid transparent;
+  box-shadow: 0 0 4px black;
+  border-radius: 0.1em;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+}
+.game__dashboard__smile:hover {
+  box-shadow: 0 0 1px black;
+}
+.game__dashboard__flags,
+.game__dashboard__timer,
+.game__dashboard__clicks {
+  background-color: rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+  font-family: monospace;
+  color: red;
+  font-weight: bold;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.404);
+  border-radius: 0.1em;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.game__dashboard__flags::after,
+.game__dashboard__timer::after {
+  content: "888";
+  position: absolute;
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.2;
+}
+canvas {
+  background-color: black;
+}
+.game__level {
+  background-color: var(--bg-main);
+  width: 100%;
+  padding: 0 3rem 2rem;
+}
+.game__level button {
+  font-size: 4rem;
+  color: var(--button-level-clr);
+  border: 1px solid transparent;
+  margin-right: 4px;
+  cursor: pointer;
+  padding: 0.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background-color: var(--button-level-bg);
+}
+.game__level button:hover,
+.game__level button.active {
+  color: var(--button-level-hover);
+}
+.theme {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  font-size: 5rem;
+  background-color: ivory;
+  border: 1px solid green;
+  border-radius: 50%;
+  padding: 0.2rem;
+  cursor: pointer;
+}
+.game__history {
+}
+.game__history__btn {
+  width: 100%;
+  background-color: var(--bg-main);
+  border: 1px solid transparent;
+  font-size: 6rem;
+
+  color: var(--button-level-clr);
+  font-weight: bold;
+  transition: color 0.3s;
+  letter-spacing: 2px;
+  padding: 1rem;
+}
+.game__history__btn:hover {
+  color: var(--button-level-hover);
+  cursor: pointer;
+}
+.game__history__items {
+  width: 100%;
+  position: absolute;
+  list-style: none;
+  background-color: var(--bg-main);
+  color: black;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 0.3rem;
+  font-size: 4rem;
+  transition: transform 0.3s, opacity 0.1s;
+  transform: scaley(0);
+  transform-origin: top;
+  opacity: 0;
+}
+.game__history__items.active {
+  transform: scaley(1);
+  opacity: 1;
+}
+.game__history__item p {
+  padding: 0.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.game__history__item p:has(.Lose) {
+  background-color: rgba(255, 0, 0, 0.08);
+}
+.game__history__item p:has(.Win) {
+  background-color: rgba(0, 0, 255, 0.08);
+}
+.game__history__item p span {
+  flex: 1;
+}
+.game__history__item p > span {
+  font-style: italic;
+}
+.game__history__item p span > span {
+  font-weight: bold;
+}
+@media screen and (min-width: 600px) {
+  .game__history__btn {
+    font-size: 4rem;
+  }
+
+  .game__history__items {
+    font-size: 3rem;
+  }
+}
+@media screen and (min-width: 842px) {
+  .game__history__btn {
+    font-size: 3.5rem;
+  }
+
+  .game__history__items {
+    font-size: 2rem;
+  }
+}
+@media screen and (min-width: 40em) {
+  .game__dashboard__flags,
+  .game__dashboard__timer,
+  .game__dashboard__smile,
+  .game__dashboard__clicks {
+    font-size: 3rem;
+  }
+  .game__level button {
+    font-size: 1.8rem;
+  }
+  .game__level {
+    padding: 0 1rem 1rem;
+  }
+}
+@media screen and (min-width: 1138px) {
+  .game__dashboard__flags,
+  .game__dashboard__timer,
+  .game__dashboard__smile,
+  .game__dashboard__clicks {
+    font-size: 1.8rem;
+  }
+  .game__level button {
+    font-size: 1.2rem;
+  }
+  .game__history__items {
+    font-size: 1.6rem;
+  }
+}

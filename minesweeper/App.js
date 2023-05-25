@@ -151,10 +151,10 @@ class Api {
                 .toString()
                 .padStart(3, "0");
               this.checkCell(cell);
-              setTimeout(() => {
-                this.checkForWin();
-              }, 10);
+              this.checkForWin();
             }
+
+            this.animate();
           }
         });
       });
@@ -287,51 +287,30 @@ class Api {
   }
   checkCell(cell) {
     const { row, col } = cell;
-
     if (this.cells[row][col + 1]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row][col + 1]);
-      }, 10);
+      this.checkRecursion(this.cells[row][col + 1]);
     }
     if (this.cells[row][col - 1]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row][col - 1]);
-      }, 10);
+      this.checkRecursion(this.cells[row][col - 1]);
     }
     if (this.cells[row - 1] && this.cells[row - 1][col]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row - 1][col]);
-      }, 10);
+      this.checkRecursion(this.cells[row - 1][col]);
     }
     if (this.cells[row - 1] && this.cells[row - 1][col - 1]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row - 1][col - 1]);
-      }, 10);
+      this.checkRecursion(this.cells[row - 1][col - 1]);
     }
     if (this.cells[row - 1] && this.cells[row - 1][col + 1]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row - 1][col + 1]);
-      }, 10);
+      this.checkRecursion(this.cells[row - 1][col + 1]);
     }
     if (this.cells[row + 1] && this.cells[row + 1][col]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row + 1][col]);
-      }, 10);
+      this.checkRecursion(this.cells[row + 1][col]);
     }
     if (this.cells[row + 1] && this.cells[row + 1][col + 1]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row + 1][col + 1]);
-      }, 10);
+      this.checkRecursion(this.cells[row + 1][col + 1]);
     }
     if (this.cells[row + 1] && this.cells[row + 1][col - 1]) {
-      setTimeout(() => {
-        this.checkRecursion(this.cells[row + 1][col - 1]);
-      }, 10);
+      this.checkRecursion(this.cells[row + 1][col - 1]);
     }
-    setTimeout(() => {
-      this.checkForWin();
-      this.animate();
-    }, 10);
   }
   checkRecursion(cell) {
     if (cell.isBomb || cell.isChecked) {
@@ -458,10 +437,12 @@ class Api {
     );
     ctx.restore();
   }
-  animate = (t = 0) => {
+  animate = () => {
     const { ctx, canvas } = this.htmlDom;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    this.draw();
+    requestAnimationFrame(() => {
+      this.draw();
+    });
   };
   suroundedBombs() {
     for (let i = 0; i < this.row; i++) {

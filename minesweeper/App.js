@@ -153,8 +153,6 @@ class Api {
               this.checkCell(cell);
               this.checkForWin();
             }
-
-            this.animate();
           }
         });
       });

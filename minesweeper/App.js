@@ -285,6 +285,10 @@ class Api {
   }
   checkCell(cell) {
     const { row, col } = cell;
+       if (cell.total > 0) {
+      cell.isChecked = true;
+      return;
+    }
     if (this.cells[row][col + 1]) {
       this.checkRecursion(this.cells[row][col + 1]);
     }
